@@ -8,8 +8,8 @@
     - name: Find out when the instance was launched
       amazon.aws.ec2_instance_info:
         region: us-east-2
-        filters:
-          "tag:Name": "{{ firewall_name }}"
+        instance_ids:
+          - "{{ firewall_ec2_id }}"
       register: r_ec2_info
 
     - name: Set admin password if the instance is new
