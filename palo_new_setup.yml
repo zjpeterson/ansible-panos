@@ -1,0 +1,53 @@
+---
+- name: Set up new Palo
+  gather_facts: false
+  hosts: "{{ firewall_name }}"
+  connection: local
+
+  tasks:
+    - name: Find out when the instance was launched
+      amazon.aws.ec2_instance_info:
+        filters:
+          "tag:Name": "{{ firewall_name }}"
+      register: r_ec2_info
+
+    - name: Set admin password if the instance is new
+      when: (now(utc=true) - (r_ec2_info.instances[0].launch_time | to_datetime('%Y-%m-%dT%H:%M:%S%z'))).total_seconds() < 600
+      block:
+      - name: Wait for port 22 to become open and contain "OpenSSH"
+        ansible.builtin.wait_for:
+          port: 22
+          host: "{{ ansible_host }}"
+          search_regex: OpenSSH
+          delay: 1
+          sleep: 30
+          timeout: 900
+
+      - name: Create tmp file for private key
+        register: r_tmp_private_key
+        ansible.builtin.tempfile:
+          state: file
+          suffix: panos
+
+      - name: Copy private key to tmp file
+        ansible.builtin.copy:
+          content: "{{ firewall_ssh_private_key }}"
+          dest: "{{ r_tmp_private_key.path }}"
+          mode: "0600"
+
+      - name: Set the initial admin password
+        ansible.builtin.expect:
+          command: "ssh -i {{ r_tmp_private_key.path }} -o StrictHostKeyChecking=accept-new admin@{{ ansible_host }}"
+          timeout: 60
+          responses:
+            "admin@PA-VM>":
+              - "configure"
+              - "exit"
+            "admin@PA-VM#":
+              - "set mgt-config users admin password"
+              - "commit"
+              - "exit"
+            "Enter password   :":
+              - "{{ panos_provider.password }}"
+            "Confirm password :":
+              - "{{ panos_provider.password }}"
