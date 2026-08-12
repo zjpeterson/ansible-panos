@@ -5,15 +5,8 @@
   connection: local
 
   tasks:
-    - name: Find out when the instance was launched
-      amazon.aws.ec2_instance_info:
-        region: us-east-2
-        instance_ids:
-          - "{{ firewall_ec2_id }}"
-      register: r_ec2_info
-
     - name: Set admin password if the instance is new
-      when: (now(utc=true) - (r_ec2_info.instances[0].launch_time[:19] | to_datetime('%Y-%m-%dT%H:%M:%S'))).total_seconds() < 600
+      when: (now().timestamp() - firewall_launch_unix | float) < 600
       block:
       - name: Wait for port 22 to become open and contain "OpenSSH"
         ansible.builtin.wait_for:
