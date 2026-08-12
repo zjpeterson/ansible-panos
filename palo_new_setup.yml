@@ -6,7 +6,7 @@
 
   tasks:
     - name: Set admin password if the instance is new
-      when: (now().timestamp() - firewall_launch_unix | float) < 600
+      when: (now().timestamp() - firewall_launch_unix | float) < 1800
       block:
       - name: Wait for port 22 to become open and contain "OpenSSH"
         ansible.builtin.wait_for:
