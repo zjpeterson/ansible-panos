@@ -22,5 +22,5 @@
     - name: Set zones and rules
       ansible.builtin.set_stats:
         data:
-          source_zones: "{{ _zones }}"
-          source_rules: "{{ _rules.gathered[:-1] }}"
+          source_zones: "{{ _zones.gathered }}"
+          source_rules: "{{ _rules.gathered }}"
