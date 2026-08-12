@@ -24,6 +24,10 @@
           sleep: 30
           timeout: 900
 
+      - name: Pause for things to spin up
+        ansible.builtin.pause:
+          minutes: 5
+
       - name: Create tmp file for private key
         register: r_tmp_private_key
         ansible.builtin.tempfile:
