@@ -7,6 +7,7 @@
   tasks:
     - name: Find out when the instance was launched
       amazon.aws.ec2_instance_info:
+        region: us-east-2
         filters:
           "tag:Name": "{{ firewall_name }}"
       register: r_ec2_info
