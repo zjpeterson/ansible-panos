@@ -1,0 +1,25 @@
+---
+- name: Pick up security rules
+  hosts: apd-panos-fw
+  connection: local
+  gather_facts: false
+
+  tasks:
+    - name: Zone query
+      paloaltonetworks.panos.panos_zone:
+        provider: "{{ panos_provider }}"
+        state: gathered
+        gathered_filter: "*"
+      register: _zones
+
+    - name: Rule query
+      paloaltonetworks.panos.panos_security_rule:
+        provider: "{{ panos_provider }}"
+        state: gathered
+        gathered_filter: "*"
+      register: _rules
+
+    - name: Set zones and rules
+      ansible.builtin.set_stats:
+        source_zones: "{{ _zones }}"
+        source_rules: "{{ _rules.gathered[:-1] }}"
