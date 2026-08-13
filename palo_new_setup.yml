@@ -28,8 +28,8 @@
         register: r_fw_ready
         # Loop until the web server responds with an HTTP 200 OK
         until: r_fw_ready.status == 200
-        retries: 40
-        delay: 15
+        retries: 20
+        delay: 30
 
       - name: Create tmp file for private key
         register: r_tmp_private_key
@@ -59,3 +59,5 @@
               - "{{ panos_provider.password }}"
             "Confirm password :":
               - "{{ panos_provider.password }}"
+        register: r_ssh_admin
+        until: "'Invalid user' not in r_ssh_admin.stdout"
