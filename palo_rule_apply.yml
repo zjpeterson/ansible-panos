@@ -1,0 +1,41 @@
+---
+- name: Apply security rules
+  hosts: "{{ firewall_name }}"
+  connection: local
+  gather_facts: false
+
+  vars:
+    panos_provider_new:
+      username: "{{ panos_provider.username }}"
+      password: "{{ panos_provider.password }}"
+      ip_address: "{{ ansible_host }}"
+
+  tasks:
+    - name: Zone apply
+      paloaltonetworks.panos.panos_zone:
+        provider: "{{ panos_provider_new }}"
+        state: present
+        mode: "{{ item.mode }}"
+        interface: "{{ item.interface }}"
+      loop: "{{ source_zones }}"
+
+    - name: Rule apply
+      paloaltonetworks.panos.panos_security_rule:
+        provider: "{{ panos_provider_new }}"
+        state: present
+        rule_name: "{{ item.rule_name }}"
+        description: "{{ item.description }}"
+        rule_type: "{{ item.rule_type }}"
+        action: "{{ item.action }}"
+        source_zone: "{{ item.source_zone }}"
+        source_ip: "{{ item.source_ip }}"
+        source_user: "{{ item.source_user }}"
+        destination_zone: "{{ item.destination_zone }}"
+        destination_ip: "{{ item.destination_ip }}"
+        application: "{{ item.application }}"
+        service: "{{ item.service }}"
+        category: "{{ item.category }}"
+        antivirus: "{{ item.antivirus }}"
+        spyware: "{{ item.spyware }}"
+        vulnerability: "{{ item.vulnerability }}"
+      loop: "{{ source_rules }}"
