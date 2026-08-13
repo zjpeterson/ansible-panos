@@ -5,7 +5,7 @@
   gather_facts: false
 
   tasks:
-    - name: Zone query
+    - name: Interface query
       paloaltonetworks.panos.panos_interface:
         provider: "{{ panos_provider }}"
         state: gathered
