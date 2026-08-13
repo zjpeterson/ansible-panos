@@ -17,6 +17,7 @@
         state: present
         mode: "{{ item.mode }}"
         interface: "{{ item.interface }}"
+        zone: "{{ item.zone }}"
       loop: "{{ source_zones }}"
 
     - name: Rule apply
