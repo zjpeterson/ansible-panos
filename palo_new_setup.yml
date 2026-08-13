@@ -60,4 +60,4 @@
             "Confirm password :":
               - "{{ panos_provider.password }}"
         register: r_ssh_admin
-        until: "'Invalid user' not in r_ssh_admin.stdout"
+        until: "'Configuration committed successfully' in r_ssh_admin.stdout"
