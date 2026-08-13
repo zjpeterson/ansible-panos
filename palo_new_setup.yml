@@ -17,9 +17,19 @@
           sleep: 30
           timeout: 900
 
-      - name: Pause for things to spin up
-        ansible.builtin.pause:
-          minutes: 5
+      # - name: Pause for things to spin up
+      #   ansible.builtin.pause:
+      #     minutes: 5
+      - name: Poll the Web UI until the management plane is ready
+        ansible.builtin.uri:
+          url: "https://{{ ansible_host }}/php/login.php"
+          validate_certs: false
+          method: GET
+        register: r_fw_ready
+        # Loop until the web server responds with an HTTP 200 OK
+        until: r_fw_ready.status == 200
+        retries: 40
+        delay: 15
 
       - name: Create tmp file for private key
         register: r_tmp_private_key
