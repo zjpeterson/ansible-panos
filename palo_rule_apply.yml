@@ -15,9 +15,11 @@
       paloaltonetworks.panos.panos_interface:
         provider: "{{ panos_provider_new }}"
         state: present
-        mode: layer3
-        interface: "{{ item.interface }}"
-        zone: "{{ item.interface }}"
+        mode: "{{ item.mode }}"
+        if_name: "{{ item.if_name }}"
+        create_default_route: "{{ item.create_default_route }}"
+        comment: "{{ item.comment }}"
+        management_profile: "{{ item.management_profile }}"
       loop: "{{ source_interfaces }}"
 
     - name: Zone apply
