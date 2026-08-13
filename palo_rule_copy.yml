@@ -6,6 +6,13 @@
 
   tasks:
     - name: Zone query
+      paloaltonetworks.panos.panos_interface:
+        provider: "{{ panos_provider }}"
+        state: gathered
+        gathered_filter: "*"
+      register: _interfaces
+
+    - name: Zone query
       paloaltonetworks.panos.panos_zone:
         provider: "{{ panos_provider }}"
         state: gathered
@@ -22,5 +29,6 @@
     - name: Set zones and rules
       ansible.builtin.set_stats:
         data:
+          source_interfaces: "{{ _interfaces.gathered }}"
           source_zones: "{{ _zones.gathered }}"
           source_rules: "{{ _rules.gathered }}"
