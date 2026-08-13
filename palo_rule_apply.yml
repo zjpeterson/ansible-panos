@@ -19,7 +19,6 @@
         if_name: "{{ item.if_name }}"
         create_default_route: "{{ item.create_default_route }}"
         comment: "{{ item.comment }}"
-        # management_profile: "{{ item.management_profile }}"
       loop: "{{ source_interfaces }}"
 
     - name: Zone apply
@@ -47,7 +46,4 @@
         application: "{{ item.application }}"
         service: "{{ item.service }}"
         category: "{{ item.category }}"
-        # antivirus: "{{ item.antivirus }}"
-        # spyware: "{{ item.spyware }}"
-        # vulnerability: "{{ item.vulnerability }}"
       loop: "{{ source_rules }}"
