@@ -11,6 +11,15 @@
       ip_address: "{{ ansible_host }}"
 
   tasks:
+    - name: Interface apply
+      paloaltonetworks.panos.panos_interface:
+        provider: "{{ panos_provider_new }}"
+        state: present
+        mode: layer3
+        interface: "{{ item.interface }}"
+        zone: "{{ item.interface }}"
+      loop: "{{ source_interfaces }}"
+
     - name: Zone apply
       paloaltonetworks.panos.panos_zone:
         provider: "{{ panos_provider_new }}"
